@@ -13,14 +13,14 @@ The Trade Simulator is built with a modular architecture consisting of several k
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                       Trade Simulator                        │
-└───────────────────────────┬─────────────────────────────────┘
-                            │
+│                       Trade Simulator                       │
+└──────────────────────────┬─────────────────────────────────┘
+                           │
         ┌──────────────────┴─────────────────┐
         ▼                                    ▼
 ┌─────────────────┐                  ┌─────────────────┐
 │    UI Layer     │                  │  WebSocket      │
-│  (PySide6/Qt)   │◄───────────────►│  Client         │◄─────► Crypto Exchange
+│  (PySide6/Qt)   │◄───────────────► │  Client         │◄─────► Crypto Exchange
 └─────────────────┘                  └─────────────────┘        APIs
         │                                    │
         ▼                                    ▼
@@ -153,9 +153,9 @@ The application uses several techniques to ensure responsive performance:
 
 ```
 ┌──────────────┐    Parameters     ┌─────────────┐
-│              │─────────────────►│             │
+│              │───────────────── │              │
 │     UI       │                   │   Models    │
-│              │◄─────────────────│             │
+│              │◄─────────────────│              │
 └──────────────┘    Results        └─────────────┘
         ▲                                 ▲
         │                                 │
