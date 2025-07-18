@@ -1,116 +1,143 @@
-
-# Trade Simulator
-
+Trade Simulator
 A professional-grade trade simulation tool for cryptocurrency traders featuring real-time market data visualization, slippage modeling, and cost analysis.
 
-## 🚀 Features
+🚀 Features
+Real-time Market Data: Connects to exchange WebSockets (Binance, Coinbase, etc.) to receive and display live order book data.
 
-- **Real-time Market Data**  
-  Connects to exchange WebSockets to receive live orderbook data.
-  
-- **Trade Cost Analysis**  
-  Calculates slippage, market impact, and fees before executing trades.
+Advanced Trade Cost Analysis: Calculates potential slippage, market impact, and exchange fees before you commit to a trade.
 
-- **Maker/Taker Prediction**  
-  Estimates whether your order will be a maker or taker.
+Maker/Taker Prediction: Intelligently estimates whether an order of a given size is likely to be a maker (adding liquidity) or a taker (removing liquidity).
 
-- **Modern User Interface**  
-  Clean, intuitive UI with color-coded metrics for fast analysis.
+Modern & Intuitive UI: A clean user interface built with PySide6, featuring color-coded metrics for quick and easy analysis.
 
-- **Multi-Exchange Support**  
-  Works with major exchanges including Binance, Coinbase, Kraken, and OKX.
+Multi-Exchange Support: Designed to be extensible for major exchanges, providing a consistent simulation experience across different platforms.
 
-## 🖼️ Screenshot
+🏗️ System Architecture
+This diagram illustrates the components and data flow of the Trade Simulator application. The UI, built with PySide6, captures user input and displays results. The core logic is managed by a controller that interfaces with a WebSocket client for live data and a simulation engine for calculations.
 
-![Trade Simulator Screenshot](docs/screenshot.png)
+graph TD
+    subgraph UserInterface [User Interface (PySide6)]
+        direction LR
+        A[Input Panel</br>Exchange, Pair, Size, Fees]
+        B[Real-time Display</br>Order Book, Metrics]
+        C[Control Buttons</br>"Simulate Trade"]
+    end
 
-## 🛠 Installation
+    subgraph CoreApplication [Core Application Logic]
+        direction TB
+        D(main.py</br>App Entry Point)
+        E(TradeController</br>Manages State & Events)
+        F(SimulationEngine</br>Calculates Slippage, Impact, Costs)
+    end
 
-### Prerequisites
+    subgraph DataLayer [Data Layer]
+        direction TB
+        G(WebSocketClient</br>Connects to Exchange APIs)
+        H(DataParser</br>Normalizes Order Book Data)
+    end
 
-- Python 3.9 or higher  
-- [PySide6 (Qt for Python)](https://pyside.org/)
+    subgraph ExternalServices [External Services]
+        direction LR
+        I([Binance WebSocket])
+        J([Coinbase WebSocket])
+        K([Kraken WebSocket])
+    end
 
-### Setup Instructions
+    %% Connections
+    A -- User Input --> E
+    C -- "onClick" --> E
+    E -- "Start Simulation" --> F
+    E -- "Start/Stop Feed" --> G
+    G -- "Connects to" --> I
+    G -- "Connects to" --> J
+    G -- "Connects to" --> K
 
-1. **Download and extract the project folder**  
-   (e.g., from Google Drive or GitHub).
+    I -- Raw Data --> G
+    J -- Raw Data --> G
+    K -- Raw Data --> G
 
-2. **Navigate to the project directory**:
+    G -- Raw JSON --> H
+    H -- Parsed Order Book --> F
+    F -- Simulation Results --> E
+    E -- Updates UI --> B
 
-   ```bash
-   cd trade-simulator
-````
+    D -- "Initializes" --> E
+    E -- "Owns/Manages" --> A & B & C
 
-3. **Create and activate a virtual environment**:
+🖼️ Screenshot
+🛠 Installation
+Prerequisites
+Python 3.9 or higher
 
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate      # On Windows: .venv\Scripts\activate
-   ```
+An operating system that supports PySide6 (Windows, macOS, Linux)
 
-4. **Install dependencies**:
+Setup Instructions
+Clone or download the repository:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+git clone https://github.com/your-username/trade-simulator.git
+cd trade-simulator
 
-5. **Run the application**:
+Create and activate a virtual environment:
 
-   ```bash
-   python -m main
-   ```
+# For macOS/Linux
+python3 -m venv .venv
+source .venv/bin/activate
 
-## 💡 Usage
+# For Windows
+python -m venv .venv
+.venv\Scripts\activate
 
-1. Select the exchange and trading pair from the dropdown.
-2. Enter your desired order size in USD.
-3. Adjust volatility (range: 0 to 1) if needed.
-4. Choose your fee tier.
-5. Click **"Simulate Trade"** to compute the results.
-6. Monitor the real-time orderbook and metrics display.
+Install the required dependencies:
 
-## 🧠 Key Components
+pip install -r requirements.txt
 
-* **Trade Simulation Engine**
-  Models to estimate market impact, slippage, and execution probabilities.
+Run the application:
 
-* **WebSocket Client**
-  Interfaces with major exchange APIs for real-time data.
+python main.py
 
-* **User Interface**
-  Built with PySide6, providing responsive and modern interaction.
+💡 Usage
+Launch the application using the instructions above.
 
-## ⚙️ Technical Details
+Select the desired Exchange and Trading Pair from the dropdown menus.
 
-The simulator combines historical and real-time data to model:
+Enter your desired Order Size in USD.
 
-* **Slippage**:
-  Difference between expected and actual execution price.
+Adjust the Volatility slider (0 to 1) to model different market conditions.
 
-* **Market Impact**:
-  Modeled using the Almgren–Chriss framework to estimate price shifts caused by your order.
+Choose your estimated Fee Tier to ensure accurate cost calculation.
 
-* **Execution Costs**:
-  Total cost including slippage, fees, and market impact.
+Click "Connect to Feed" to start receiving live order book data.
 
-## 📁 Project Structure
+Click "Simulate Trade" to compute and display the results.
 
-```
+Analyze the metrics for Slippage, Market Impact, Fees, and the Maker/Taker prediction.
+
+🧠 Key Components
+Trade Simulation Engine: Contains the core mathematical models to estimate market impact (based on the Almgren–Chriss framework), slippage, and execution probabilities.
+
+WebSocket Client: A robust client that interfaces with major exchange APIs for receiving high-frequency, real-time order book data.
+
+User Interface (PySide6): A responsive and modern GUI that provides an intuitive way for users to interact with the simulator and visualize data.
+
+⚙️ Technical Details
+The simulator provides pre-trade analytics by modeling how an order would interact with the live order book.
+
+Slippage: Calculated as the percentage difference between the expected execution price (based on the current order book) and the actual average price after your order "walks the book."
+
+Market Impact: Modeled to estimate how the price might shift as a direct result of your order's size removing liquidity.
+
+Execution Costs: The total estimated cost of the trade, combining slippage, exchange fees (based on the selected tier), and market impact.
+
+📁 Project Structure
 trade-simulator/
-├── docs/                 # Documentation and screenshots
+├── docs/                # Documentation and screenshots
 ├── src/
-│   ├── models/           # Simulation models
-│   ├── ui/               # UI components (PySide6)
-│   ├── utils/            # Helper utilities  
-│   └── websocket/        # WebSocket data client
-├── tests/                # Unit and integration tests
-├── main.py               # Application entry point
-└── requirements.txt      # Python dependencies
-```
+│   ├── models/          # Simulation models (simulation_engine.py)
+│   ├── ui/              # UI components (main_window.py, style.qss)
+│   └── websocket/       # WebSocket data client (client.py)
+├── tests/               # Unit and integration tests
+├── main.py              # Application entry point
+└── requirements.txt     # Python dependencies
 
-## 👩‍💻 Author
-
-Developed by **Vijayshree**
-
----
+👩‍💻 Author
+Developed by Vijayshree
