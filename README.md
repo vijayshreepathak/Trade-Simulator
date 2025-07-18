@@ -66,8 +66,11 @@ graph TD
     E -.-> C
 ```
 
-## 🖼️ Screenshot
-(Screenshot image would be displayed here)
+## 🖼 Screenshot
+
+![Trade Simulator Screenshot](docs/screenshot.png)
+
+
 
 ## 🛠 Installation
 
